@@ -35,9 +35,4 @@ public with sharing class BitlyIntegrationService {
         }
         return shortURL;
     }
-
-    Public void calculateTimeOut()  {
-        String intitTime;
-        
-    }
 }
