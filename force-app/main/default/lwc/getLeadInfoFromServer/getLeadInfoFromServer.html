@@ -1,0 +1,66 @@
+<template>
+    <lightning-card variant="narrow" title="Lead Information From Server" icon-name="custom:custom32">
+        <div class="slds-var-p-around_small">
+                <lightning-radio-group name="radioGroup"
+                    label="OAuth Authorization Flow"
+                    options={radioOptions}
+                    value={selectedOption}
+                    required
+                    type="radio"
+                    onchange={handleRadioChange}>
+                </lightning-radio-group>
+
+            <div class="slds-var-p-around_small">
+                <lightning-input type="text" name="search_Lead" value={searchText} class="SearchLead" label="Search Term"
+                                 placeholder="Input here.." onchange={onChangeHandler}>
+                </lightning-input>
+            </div>
+            
+            <lightning-button variant="brand" label="Search Lead Records" name="btn_search_lead"
+                              class="slds-var-p-around_small" onclick={clickHandler}>
+            </lightning-button> 
+
+            <template if:true={leadRecords}>
+                <template if:true={toggleSpinner}>
+                    <lightning-spinner alternative-text="Loading"></lightning-spinner>
+                </template>
+                <lightning-card>
+                    <lightning-datatable
+                        key-field="Id"
+                        data={leadRecords}
+                        hide-checkbox-column="true"
+                        columns={columns}
+                        onrowaction={handleRowActions}>
+                    </lightning-datatable>
+                </lightning-card>
+
+                <template if:true={isEditForm}>
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <header class="slds-modal__header">
+                                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Update Email</h2>
+                            </header>
+
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                <p class="slds-var-p-around_small"><strong>Email: </strong>{currentEditRecord.Email}</p>
+                                <lightning-input type="email" name="Email" label="New Eamil" value={currentEditRecord.NewEmail} 
+                                                placeholder="Input here.." onchange={onEmailChange} class="slds-var-p-around_small">
+                                </lightning-input>
+    
+                                <footer class="slds-modal__footer">
+                                    <lightning-button variant="brand"
+                                                      name="update"
+                                                      label="Update Email"
+                                                      onclick={updateEmailhandler}>
+                                    </lightning-button>
+                                    <lightning-button variant="netrual" name="Cancel" label="Cancel" onclick={cancelHandler}></lightning-button>
+                                  </footer>
+                            </div>
+                        </div>
+                    </section>
+                </template>
+
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,47 @@
+<template>
+    <lightning-card variant="narrrow" title="Insert Lead Record into Server" icon-name="custom:custom29">
+        <div class="slds-var-p-around_small">
+            <form class="createForm">
+                <lightning-input type="text" label="First Name" placeholder="Enter First Name" required
+                                 name="FirstName" onchange={changeHandler} class="slds-var-m-bottom_x-small">
+                </lightning-input>
+                <lightning-input type="text" label="Last Name" placeholder="Enter Last Name" required
+                                 name="LastName" onchange={changeHandler} class="slds-var-m-bottom_x-small">
+                </lightning-input>
+                <lightning-input type="text" label="Company Name" placeholder="Enter Company Name"
+                                 name="CompanyName" onchange={changeHandler} class="slds-var-m-bottom_x-small">
+                </lightning-input>
+                <lightning-input type="tel"  label="Phone" name="Phone"
+                                 onchange={changeHandler} class="slds-var-m-bottom_x-small">
+                </lightning-input>
+                <lightning-input type="email"  label="Email" name="Email" required
+                                 onchange={changeHandler} class="slds-var-m-bottom_x-small">
+                </lightning-input>
+
+                <template if:true={leadSourceOptions}>
+                    <lightning-combobox
+                        name="LeadSource"
+                        label="LeadSource"
+                        class="slds-var-m-bottom_x-small"
+                        placeholder="Select Lead Source.."
+                        options={leadSourceOptions}
+                        onchange={changeHandler}>
+                    </lightning-combobox>
+                </template>
+
+                <template if:true={industryOptions}>
+                    <lightning-combobox
+                        name="Industry"
+                        label="Industry"
+                        class="slds-var-m-bottom_x-small"
+                        placeholder="Select Industry.."
+                        options={industryOptions}
+                        onchange={changeHandler}>
+                    </lightning-combobox>
+                </template>
+
+                <lightning-button variant="brand" label="Create Lead in Server" onclick={createLeadHandler}></lightning-button>
+            </form>
+        </div>
+    </lightning-card>
+</template>
