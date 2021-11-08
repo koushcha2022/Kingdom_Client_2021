@@ -1,3 +1,4 @@
+//Class CalculatorClass developed by KB
 public class CalculatorClass {
 
     public double Addition(Double num1,Double num2) {
