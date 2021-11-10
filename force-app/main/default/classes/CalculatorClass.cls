@@ -18,7 +18,7 @@ public class CalculatorClass {
         return num1 - num2;
     }
 
-    public double Multiplication(Double mum1,Double mum2)   {
+    public double Multiplication(Double num1,Double num2)   {
         return num1 * num2;
     }
 
