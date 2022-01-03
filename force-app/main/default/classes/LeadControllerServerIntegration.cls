@@ -4,50 +4,56 @@ Public with sharing class LeadControllerServerIntegration {
     public static String instanceURL;
 
     public static void requestAccessToken() {
-        Integration_Setup__c setupInfoparam = [SELECT Server_Name__c, Server_User_Name__c, Password__c, Client_ID__c, Client_Secret__c, EndPoints__c 
-                                               FROM Integration_Setup__c WHERE Name = 'INT-001' LIMIT 1];
+        try {
+            Integration_Setup__c setupInfoparam = [SELECT Server_Name__c, Server_User_Name__c, Password__c, Client_ID__c, Client_Secret__c, EndPoints__c 
+                                                   FROM Integration_Setup__c WHERE Name = 'INT-001' LIMIT 1];
 
-        String accessTokenEndPoint = setupInfoparam.EndPoints__c;
-        accessTokenEndPoint +=  '?grant_type=password';
-        accessTokenEndPoint += '&client_id=' + setupInfoparam.Client_ID__c;
-        accessTokenEndPoint += '&client_secret=' + setupInfoparam.Client_Secret__c;
-        accessTokenEndPoint += '&username=' + setupInfoparam.Server_User_Name__c;
-        accessTokenEndPoint += '&password=' + setupInfoparam.Password__c;
-        System.debug('token Endpoint: ' + accessTokenEndPoint);
+            if(setupInfoparam != NULL) { 
+                String accessTokenEndPoint = setupInfoparam.EndPoints__c;
+                accessTokenEndPoint +=  '?grant_type=password';
+                accessTokenEndPoint += '&client_id=' + setupInfoparam.Client_ID__c;
+                accessTokenEndPoint += '&client_secret=' + setupInfoparam.Client_Secret__c;
+                accessTokenEndPoint += '&username=' + setupInfoparam.Server_User_Name__c;
+                accessTokenEndPoint += '&password=' + setupInfoparam.Password__c;
+                System.debug('token Endpoint: ' + accessTokenEndPoint);
 
-        //Instantiate Http Class
-        http h = new Http();
-        //Instantiate HttpRequest Class
-        HttpRequest req = new HttpRequest();
-        //Set Request Endpoint using URL Encoded version
-        req.setEndpoint(accessTokenEndPoint);
-        //Set Post Method
-        req.setMethod('POST');
+                //Instantiate Http Class
+                http h = new Http();
+                //Instantiate HttpRequest Class
+                HttpRequest req = new HttpRequest();
+                //Set Request Endpoint using URL Encoded version
+                req.setEndpoint(accessTokenEndPoint);
+                //Set Post Method
+                req.setMethod('POST');
 
-        //For Basic authorization, create a BLOB type Authentication Header
-        Blob headerValue = BLOB.valueOf(setupInfoparam.Server_User_Name__c + ':' + setupInfoparam.Password__c);
-        String authorizationValue = 'BASIC' + EncodingUtil.base64Encode(headerValue);
-        //Sets the contents of the request header.
-        req.setHeader('Authorization', authorizationValue);
+                //For Basic authorization, create a BLOB type Authentication Header
+                Blob headerValue = BLOB.valueOf(setupInfoparam.Server_User_Name__c + ':' + setupInfoparam.Password__c);
+                String authorizationValue = 'BASIC' + EncodingUtil.base64Encode(headerValue);
+                //Sets the contents of the request header.
+                req.setHeader('Authorization', authorizationValue);
 
-        //Finally make a Http Call with HttpRequest
-        HttpResponse hResp = h.send(Req);
+                //Finally make a Http Call with HttpRequest
+                HttpResponse hResp = h.send(Req);
 
-        if(hResp.getStatusCode() == 200)  {
-            System.debug('Http Response :' + hResp.getBody());
-            JSONParser jParser = JSON.createParser(hResp.getBody());
-            while(jParser.nextToken() != NULL) {
-                if(jParser.getCurrentToken() == JSONToken.FIELD_NAME && jParser.getText() == 'instance_url')    {
-                    jParser.nextToken();
-                    instanceURL = jParser.getText();    
-                }
+                if(hResp.getStatusCode() == 200)  {
+                    System.debug('Http Response :' + hResp.getBody());
+                    JSONParser jParser = JSON.createParser(hResp.getBody());
+                    while(jParser.nextToken() != NULL) {
+                        if(jParser.getCurrentToken() == JSONToken.FIELD_NAME && jParser.getText() == 'instance_url')    {
+                            jParser.nextToken();
+                            instanceURL = jParser.getText();    
+                        }
 
-                if(jParser.getCurrentToken() == JSONToken.FIELD_NAME && jParser.getText() == 'access_token')    {
-                    jParser.nextToken();
-                    accessToken = jParser.getText();    
-                    system.debug('Access token :' + accessToken);
-                }
+                        if(jParser.getCurrentToken() == JSONToken.FIELD_NAME && jParser.getText() == 'access_token')    {
+                            jParser.nextToken();
+                            accessToken = jParser.getText();    
+                            system.debug('Access token :' + accessToken);
+                        }
+                    }
+                }    
             }
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
         }
     }
 
@@ -154,7 +160,7 @@ Public with sharing class LeadControllerServerIntegration {
                 jGen.writeStartObject();
                 jGen.writeStringField('fName', fName != NULL ? fName : '');
                 jGen.writeStringField('lName',lName != NULL ? lName : '');
-                jGen.writeStringField('leadCompany', leadCompany != NULL ? leadCompany : '');
+                jGen.writeStringField('compName', leadCompany != NULL ? leadCompany : '');
                 jGen.writeStringField('leadEmail', leadEmail != NULL ? leadEmail : '');
                 jGen.writeStringField('leadIndustry', leadIndustry != NULL ? leadIndustry : '');
                 jGen.writeStringField('leadSource', leadSource != NULL ? leadSource : '');

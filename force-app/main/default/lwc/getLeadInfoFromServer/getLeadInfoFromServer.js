@@ -61,6 +61,7 @@ export default class GetLeadInfoFromServer extends LightningElement {
         } else  {
             searchText.setCustomValidity('');
             this.toggleSpinner = true;
+            
             //Call Apex Method
             GetLeadRecords({SearchTerm:this.searchText, SelectOption:this.selectedOption})
             .then(result=>  {

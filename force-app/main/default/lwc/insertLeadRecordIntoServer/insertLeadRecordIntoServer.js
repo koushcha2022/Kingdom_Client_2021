@@ -50,7 +50,7 @@ export default class InsertLeadRecordIntoServer extends LightningElement {
         InsertLeadRecord({fName:this.formFields.FirstName, lName:this.formFields.LastName, leadCompany:this.formFields.CompanyName, leadEmail:this.formFields.Email,
                           leadIndustry:this.formFields.Industry, leadSource:this.formFields.LeadSource, leadPhone:this.formFields.Phone})
         .then(result=>  {
-            console.log(result);
+            console.log('New Lead Message:' + result);
             this.resetAllFields();
             this.showToastMessage('records created !!',result,'success');
         }).catch(error=>    {

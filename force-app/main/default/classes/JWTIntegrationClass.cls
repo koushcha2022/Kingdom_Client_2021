@@ -61,7 +61,7 @@ Public with sharing class JWTIntegrationClass {
         String iss = this.JWTConfig.JWTConnectedAppConsumerKey;
         //authorization server
         String aud = 'https://' + this.JWTConfig.JWTHostName;
-        String exp = String.valueOf(System.currentTimeMillis() + 60*60*60*1000);
+        String exp = String.valueOf(System.currentTimeMillis() + 60*60*100);
         JWTBody body = new JWTBody(iss,aud,prn,exp);
         String bodyJSON = JSON.serialize(body); 
         system.debug('bodyJSON: ' + bodyJSON);    
@@ -69,7 +69,7 @@ Public with sharing class JWTIntegrationClass {
         String encodedHWTbody = this.base64URLSafe(Blob.valueOf(bodyJSON));
         system.debug('encodedHWTbody: ' + encodedHWTbody);
 
-        //Create a String with encoded JWT Header and the encoded JWT Claims Set 
+        //Create a String with encoded JWT Header and the encoded JWT Claims Set seperated by '.'
         String accessToken = encodedJWTHeader + '.' + encodedHWTbody;
 
         //Sign the resulting string using RSA SHA256 Certificate

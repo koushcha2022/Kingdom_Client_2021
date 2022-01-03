@@ -1,4 +1,9 @@
 public with sharing class AccountReplicationProcess {
+
+    //Public variable
+    Public Static String instanceURL;
+    Public Static String accessToken;
+
     //Wrapper Class
     public class AccountRecordFields  {
         @AuraEnabled
@@ -14,7 +19,7 @@ public with sharing class AccountReplicationProcess {
     }
 
     @AuraEnabled(Cacheable=true)
-    public static string CloneToServer(String pName, String pAccountNumber, String pIndustry, String pAnnualRevenue, String pRating){
+    public static void CloneToServer(){
         try {
             //Oauth 2.0 UserName and password Flow
             //=====================================
@@ -22,12 +27,11 @@ public with sharing class AccountReplicationProcess {
             //Make a REST call to access Oauth Token from Authentication Server using Connected App
             //Step 1: POST method calls
             //Step 2: HTTP Call - Send(HttpRequest) method which returns HTTpResponse
-            String accId;
             String ConsumerKey = '3MVG9SemV5D80oBdYqCQuwdYbl.xN92s6FDlGtUbH5w0bUTsQnqTf6PVhw_vaXy5cNVgHLQk.qiW72W4ocyzB';
             String ConsumerSecret = 'AEB8A217A55ADCF0A2AED74A24D5D1AC8FBEBFDE859F5B75BD7879A0EC396680';
             String username = 'koushcha2010-d7kl@force.com';
             //password = password + Security Token 
-            String password = 'KB@@Sep2021LTD1vXXlc9YYfIjRUmuI9BciD';
+            String password = 'KB@@Dec2021lvY3DUJGTNtX3r2AIxFlIsN1m';
 
             String endpointURL = 'https://login.salesforce.com/services/oauth2/token';
             endpointURL = endpointURL + '?grant_type=password&client_id=' + ConsumerKey + '&client_secret=' + ConsumerSecret + '&username=' +
@@ -53,10 +57,6 @@ public with sharing class AccountReplicationProcess {
             HttpResponse resp = h.send(req);
             system.debug('Response: ' + resp.getBody());
 
-
-            String accessToken;
-            String instanceURL;
-
             System.JSONParser parser = JSON.createParser(resp.getBody());
 
             while(parser.nextToken() != NULL)	{
@@ -72,6 +72,20 @@ public with sharing class AccountReplicationProcess {
 
             system.debug('Access Token :' + accessToken);
             system.debug('Instance URL :' + instanceURL);
+            
+    
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled(Cacheable=true)
+    public static string replicateData(String pName, String pAccountNumber, String pIndustry, String pAnnualRevenue, String pRating)  {
+        //try {
+            String accId;
+
+            //Get Access token and Instance URL
+            AccountReplicationProcess.CloneToServer();
 
             //Instantiate Service Class
             soapAccountCreation.AccountCreationSOAPService AccCreationService = new soapAccountCreation.AccountCreationSOAPService();
@@ -101,8 +115,8 @@ public with sharing class AccountReplicationProcess {
             }
             return accId;
 
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        }
-    }
+        //} catch (Exception e) {
+        //    throw new AuraHandledException(e.getMessage());
+        //}
+    }    
 }
