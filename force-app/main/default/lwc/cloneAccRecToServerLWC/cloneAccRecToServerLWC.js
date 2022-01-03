@@ -1,7 +1,7 @@
 import { LightningElement, api, wire } from 'lwc';
 import { getRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import CloneToServer from '@salesforce/apex/AccountReplicationProcess.CloneToServer';
+import ReplicateData from '@salesforce/apex/AccountReplicationProcess.replicateData';
 import NAME_FIELD from '@salesforce/schema/Account.Name';
 import ACCNUMBER_FIELD from '@salesforce/schema/Account.AccountNumber';
 import INDUSTRY_FIELD from '@salesforce/schema/Account.Industry';
@@ -34,10 +34,10 @@ export default class CloneAccRecToServerLWC extends LightningElement {
           } 
 
           //Call Apex Method and it return Promise
-          CloneToServer({ pName:inputParams.Name, pAccountNumber:inputParams.AccountNumber, pIndustry:inputParams.Industry, 
+          ReplicateData({ pName:inputParams.Name, pAccountNumber:inputParams.AccountNumber, pIndustry:inputParams.Industry, 
                           pAnnualRevenue:inputParams.AnnualRevenue, pRating:inputParams.Rating })
           .then(success=>   {
-            console.log('Acc ID:',success);
+            console.log('Acc ID:',JSON.stringify(success));
             this.showToast('Account Created',`Account ${success} is created successfully`,'success');
 
           }).catch(error=>  {
